@@ -27,7 +27,7 @@ export const GeneralLayout: React.FC<Props> = ({
 
       <Navbar />
 
-      <main className="container mx-auto max-w-7xl flex-[1_0_auto] px-8">
+      <main className="container mx-auto max-w-7xl flex-[1_0_auto] px-4 sm:px-6 lg:px-8 my-10">
         {children}
       </main>
 

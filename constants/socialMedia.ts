@@ -7,22 +7,22 @@ import {
 
 export const socialMedia = [
   {
-    link: "https://www.linkedin.com/in/sanchez-saltos-j/",
+    link: "https://www.linkedin.com/",
     label: "LinkedIn",
     icon: AiFillLinkedin,
   },
   {
-    link: "https://github.com/SALT0S",
+    link: "https://github.com/",
     label: "GitHub",
     icon: AiFillGithub,
   },
   {
-    link: "https://www.facebook.com/profile.php?id=100004164240511",
+    link: "https://www.facebook.com/",
     label: "Facebook",
     icon: AiFillFacebook,
   },
   {
-    link: "https://twitter.com/jose_schzs",
+    link: "https://twitter.com/",
     label: "Twitter",
     icon: AiOutlineTwitter,
   },

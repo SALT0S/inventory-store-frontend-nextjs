@@ -1,6 +1,6 @@
 export const MenuNav = [
   { name: "Home", href: "/" },
-  { name: "Blog", href: "/blog" },
-  { name: "About", href: "/about-me" },
-  { name: "Contact", href: "/contact" },
+  { name: "item 1", href: "/item1" },
+  { name: "item 2", href: "/item2" },
+  { name: "item 3", href: "/item3" },
 ];
