@@ -1,9 +1,12 @@
 import type { NextPage } from "next";
+import { NextSeo } from "next-seo";
 import { GeneralLayout } from "../components/layouts";
 
-const Home: NextPage = () => {
+const HomePage: NextPage = () => {
   return (
-    <GeneralLayout title="test">
+    <GeneralLayout>
+      <NextSeo title="Portfolio" />
+
       <div className="">
         <div>
           <h1 className="text-3xl font-bold underline ">Hello world!</h1>
@@ -15,4 +18,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default HomePage;

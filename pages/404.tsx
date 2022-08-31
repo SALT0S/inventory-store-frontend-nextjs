@@ -1,8 +1,19 @@
+import { NextSeo } from "next-seo";
 import { GeneralLayout } from "../components/layouts";
 
-const Custom404 = () => {
+const Custom404Page = () => {
   return (
-    <GeneralLayout title="Page Not Found" pageDescription="Page not found">
+    <GeneralLayout>
+      <NextSeo
+        title="Page not found"
+        description="You just hit a route that doesn't exist... the sadness."
+        openGraph={{
+          title: "Page not found",
+          description:
+            "You just hit a route that doesn't exist... the sadness.",
+        }}
+      />
+
       <div className="min-h-[65vh] flex justify-center">
         <div className="flex flex-col items-center text-center justify-center md:flex-row md:text-left">
           <div className="flex text-8xl font-extralight">
@@ -20,4 +31,4 @@ const Custom404 = () => {
   );
 };
 
-export default Custom404;
+export default Custom404Page;
