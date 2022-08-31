@@ -7,11 +7,8 @@ export const Footer = () => {
       <div className="container mx-auto grid gap-10 px-4 py-9 text-center md:grid-cols-1 lg:grid-cols-2 lg:text-left">
         <div>
           <div className="flex place-content-center text-white lg:place-content-start">
-            <span className="bg-white py-1 px-2 text-xl font-bold text-black">
-              Jose
-            </span>
             <p className="bg-black py-1 px-2 text-lg font-bold text-white dark:text-white">
-              Sanchez S.
+              LOGO
             </p>
           </div>
           <div className="my-5 flex place-content-center gap-8 lg:place-content-start">
@@ -59,7 +56,7 @@ export const Footer = () => {
 
       <div className="bg-zinc-900 py-4 dark:bg-black">
         <p className="text-center text-white ">
-          &copy; {new Date().getFullYear()} JOSE SANCHEZ S - TEMPLATE.
+          &copy; {new Date().getFullYear()} NEXTJS - TEMPLATE.
         </p>
       </div>
     </footer>

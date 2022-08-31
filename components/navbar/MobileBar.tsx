@@ -22,13 +22,11 @@ export const MobileBar = () => {
         <div className="overflow-hidden rounded-lg bg-white shadow-md ring-1 ring-black ring-opacity-5 dark:bg-black">
           <div className="flex items-center justify-between px-5 pt-4">
             <div className="flex text-white">
-              <span className="bg-white py-1 px-2 text-xl font-bold text-black">
-                Jose
-              </span>
               <p className="bg-black py-1 px-2 text-lg font-bold text-white dark:text-white">
-                Sanchez S.
+                LOGO
               </p>
             </div>
+
             <div className="-mr-2">
               <Popover.Button className="inline-flex items-center justify-center p-2">
                 <span className="sr-only">Close main menu</span>
@@ -48,9 +46,9 @@ export const MobileBar = () => {
             ))}
           </ul>
 
-          <button className="block w-full bg-gray-50 px-5 py-3 text-center font-medium hover:bg-gray-100 dark:bg-zinc-900">
-            <div className="flex justify-center">get started</div>
-          </button>
+          <p className="block w-full bg-gray-50 px-5 py-3 text-center font-medium hover:bg-gray-100 dark:bg-zinc-900">
+            Get started
+          </p>
         </div>
       </Popover.Panel>
     </Transition>

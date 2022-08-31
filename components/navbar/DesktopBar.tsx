@@ -15,11 +15,8 @@ export const DesktopBar = () => {
           <div className="flex w-full items-center justify-between md:w-auto">
             <Link href="/">
               <a className="flex text-white">
-                <span className="bg-white py-1 px-2 text-xl font-bold text-black">
-                  Jose
-                </span>
                 <p className="bg-black py-1 px-2 text-lg font-bold text-white dark:text-white">
-                  Sanchez S.
+                  LOGO
                 </p>
               </a>
             </Link>
@@ -44,7 +41,7 @@ export const DesktopBar = () => {
           ))}
         </ul>
 
-        <div className="hidden md:flex">Get started</div>
+        <p className="hidden md:block">Get started</p>
       </nav>
     </div>
   );
