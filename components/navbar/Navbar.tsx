@@ -1,6 +1,6 @@
-import { Popover } from "@headlessui/react";
-import { DesktopBar } from "./DesktopBar";
-import { MobileBar } from "./MobileBar";
+import { Popover } from '@headlessui/react';
+import { DesktopBar } from './DesktopBar';
+import { MobileBar } from './MobileBar';
 
 export const Navbar = () => {
   return (
