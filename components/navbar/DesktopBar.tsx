@@ -13,8 +13,8 @@ export const DesktopBar = () => {
         <div className='flex flex-shrink-0 flex-grow items-center lg:flex-grow-0'>
           <div className='flex w-full items-center justify-between md:w-auto'>
             <Link href='/'>
-              <p className='flex bg-black py-1 px-2 text-lg font-bold text-white dark:text-white'>
-                LOGO
+              <p className='flex bg-sky-800 py-1 px-2 text-lg font-bold text-white dark:text-white'>
+                Inventario de Tienda UG
               </p>
             </Link>
 
@@ -36,12 +36,12 @@ export const DesktopBar = () => {
               key={menu.name}
               text={menu.name}
               href={menu.href}
-              className='cursor-pointer font-medium text-gray-500 hover:text-black dark:text-zinc-300 dark:hover:text-white'
+              className='font-medium text-gray-500 hover:text-black dark:text-zinc-300 dark:hover:text-white'
             />
           ))}
         </ul>
 
-        <p className='hidden md:block'>Get started</p>
+        <p className='hidden md:block'>Iniciar Sesión</p>
       </nav>
     </div>
   );
