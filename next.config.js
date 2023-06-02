@@ -40,6 +40,10 @@ const nextConfig = {
     locales: ["en"],
     defaultLocale: "en",
   },
+
+  images: {
+    domains: ['api.inventory-store.test'],
+  },
 };
 
 module.exports = nextConfig;

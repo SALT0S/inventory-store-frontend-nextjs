@@ -15,22 +15,41 @@ interface Props {
 
 const AddCategoryModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategoryImage, setNewCategoryImage] = useState<File | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setNewCategoryImage(e.target.files[0]);
+    }
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    const formData = new FormData();
+    formData.append('name', newCategoryName);
+    if (newCategoryImage) {
+      formData.append('image', newCategoryImage);
+    }
+
     try {
-      await axios.post('/categories', { name: newCategoryName });
+      await axios.post('/categories', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
       const response = await axios.get('/categories');
       const updatedCategories: Category[] = response.data;
 
       setNewCategoryName('');
+      setNewCategoryImage(null);
       onClose();
     } catch (error) {
       console.error('Error creating category:', error);
     }
   };
+
 
   return (
     <div className={`fixed z-10 inset-0 overflow-y-auto ${isOpen ? '' : 'hidden'}`}>
@@ -61,6 +80,15 @@ const AddCategoryModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ 
                       onChange={(e) => setNewCategoryName(e.target.value)}
                       className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       placeholder="Nombre de la categoría"
+                      required
+                    />
+                  </div>
+                  <div className="mt-2">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       required
                     />
                   </div>

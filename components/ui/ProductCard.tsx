@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface Product {
   id: number;
@@ -13,6 +14,7 @@ interface Product {
   category: {
     name: string;
   };
+  image: string; // Agrega la propiedad 'image' al tipo de objeto 'Product'
 }
 
 interface Props {
@@ -29,7 +31,7 @@ export const ProductCard: React.FC<Props> = ({ products }) => {
       {products.map((product) => (
         <div key={product.id} className="group relative mb-8">
           <div className="w-full h-56 bg-gray-200 rounded-md overflow-hidden group-hover:opacity-75 lg:h-72 xl:h-80">
-            {/* Replace the image source with the appropriate field from the product object */}
+            <Image src={`http://api.inventory-store.test/images/${product.image}`} alt={product.name} width={500} height={500} className="w-full h-full object-cover" />
           </div>
           <h3 className="mt-4 text-sm text-gray-700">
             <Link href={`/productos/${product.id}`}>

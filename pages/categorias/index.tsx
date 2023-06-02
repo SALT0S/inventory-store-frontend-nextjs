@@ -9,6 +9,7 @@ import CategoryCard from "../../components/ui/CategoryCard";
 interface Category {
   id: number;
   name: string;
+  image: string;
 }
 
 interface Props {

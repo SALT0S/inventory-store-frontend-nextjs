@@ -17,6 +17,7 @@ interface Product {
   category: {
     name: string;
   }
+  image: string;
 }
 
 interface Props {

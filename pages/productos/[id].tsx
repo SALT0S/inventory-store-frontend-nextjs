@@ -2,6 +2,7 @@ import { GeneralLayout } from "../../components/layouts";
 import React, { useState, useEffect } from 'react';
 import axios from "../../lib/axios";
 import {NextSeo} from "next-seo";
+import Image from "next/image";
 
 interface Product {
   id: number;
@@ -15,6 +16,7 @@ interface Product {
   category: {
     name: string;
   }
+  image: string;
 }
 
 interface Props {
@@ -31,7 +33,7 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
         <div className="lg:grid lg:grid-rows-1 lg:grid-cols-7 lg:gap-x-8 lg:gap-y-10 xl:gap-x-16">
           <div className="lg:row-end-1 lg:col-span-4">
             <div className="aspect-w-4 aspect-h-3 rounded-lg bg-gray-100 overflow-hidden">
-              {/* Replace the image source with the appropriate field from the product object */}
+              <Image src={`http://api.inventory-store.test/images/${product.image}`} alt={product.name} width={500} height={500} className="w-full h-full object-center object-cover" />
             </div>
           </div>
 
