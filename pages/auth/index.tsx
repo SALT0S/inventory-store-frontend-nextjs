@@ -2,7 +2,6 @@ import { NextPage } from "next";
 import Link from "next/link";
 import { useState } from "react";
 import Errors from "../../components/ui/Errors";
-import useAuth from "../../lib/useAuth";
 
 const LoginPage: NextPage = () => {
   const [email, setEmail] = useState("");
@@ -10,17 +9,10 @@ const LoginPage: NextPage = () => {
   const [remember, setRemember] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
 
-  const { login, isLoading, user } = useAuth({ middleware: "guest" });
-
   const submitForm = async (event: any) => {
     event.preventDefault();
-
-    await login({ email, password, remember, setErrors });
   };
 
-  if (isLoading || user) {
-    return <>Loading...</>;
-  }
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="max-w-md w-full p-6 bg-white shadow-lg rounded-lg">

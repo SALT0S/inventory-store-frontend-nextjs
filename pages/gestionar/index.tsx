@@ -21,27 +21,18 @@ const ManagePage: NextPage<Props> = ({ products, categories }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
-  try {
-    const productsResponse = await axios.get("/products");
-    const categoriesResponse = await axios.get("/categories");
-    const products: Product[] = productsResponse.data;
-    const categories: Category[] = categoriesResponse.data;
+export const getStaticProps: GetServerSideProps<Props> = async () => {
+  const productsResponse = await axios.get("/products");
+  const categoriesResponse = await axios.get("/categories");
+  const products: Product[] = productsResponse.data;
+  const categories: Category[] = categoriesResponse.data;
 
-    return {
-      props: {
-        products,
-        categories,
-      },
-    };
-  } catch (error) {
-    return {
-      props: {
-        products: [],
-        categories: [],
-      },
-    };
-  }
+  return {
+    props: {
+      products,
+      categories,
+    },
+  };
 };
 
 export default ManagePage;

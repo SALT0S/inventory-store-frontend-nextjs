@@ -27,7 +27,11 @@ export const deleteCategory = async (id: number) => {
   return response.data;
 };
 
-const updateCategory = async (id: number, name: string, image?: File) => {
+export const updateCategory = async (
+  id: number,
+  name: string,
+  image?: File
+) => {
   const formData = new FormData();
   formData.append("name", name);
   if (image) {
@@ -73,8 +77,4 @@ export const createProduct = async (
   });
 
   return response.data;
-};
-
-export default {
-  updateCategory,
 };

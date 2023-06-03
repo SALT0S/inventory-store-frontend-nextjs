@@ -1,3 +1,4 @@
+/*
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
@@ -72,3 +73,4 @@ export default function useAuth({ middleware }: UseAuthOptions = {}) {
     isLoading,
   };
 }
+*/
