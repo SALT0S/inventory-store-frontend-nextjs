@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
 type Props = {
   errors: string[];
-}
+};
 
 const Errors: React.FC<Props> = ({ errors, ...props }) => {
   return (
@@ -14,7 +14,7 @@ const Errors: React.FC<Props> = ({ errors, ...props }) => {
           </div>
 
           <ul className="mt-3 list-disc list-inside text-sm text-red-600">
-            {errors.map(error => (
+            {errors.map((error) => (
               <li key={error}>{error}</li>
             ))}
           </ul>

@@ -1,9 +1,9 @@
-import axios from 'axios';
+import axios from "axios";
 
 export default axios.create({
-  baseURL: 'http://api.inventory-store.test/api',
+  baseURL: "http://api.inventory-store.test/api",
   headers: {
-    'X-Requested-With': 'XMLHttpRequest',
+    "X-Requested-With": "XMLHttpRequest",
   },
   withCredentials: true,
 });

@@ -1,11 +1,12 @@
-import { Footer } from '../footer';
-import { Navbar } from '../navbar';
+import React from 'react';
+import {Navbar} from "../navbar";
+import {Footer} from '../ui/Footer';
 
-interface Props {
+interface GeneralLayoutProps {
   children: React.ReactNode;
 }
 
-export const GeneralLayout: React.FC<Props> = ({ children }) => {
+export const GeneralLayout: React.FC<GeneralLayoutProps> = ({ children }) => {
   return (
     <div className='flex min-h-screen flex-col'>
       <Navbar />
@@ -18,3 +19,4 @@ export const GeneralLayout: React.FC<Props> = ({ children }) => {
     </div>
   );
 };
+

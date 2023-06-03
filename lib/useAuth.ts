@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import useSWR from 'swr';
-import axios from './axios';
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import useSWR from "swr";
+import axios from "./axios";
 
 interface LoginProps {
   setErrors: (errors: string[]) => void;
@@ -11,7 +11,7 @@ interface LoginProps {
 }
 
 interface UseAuthOptions {
-  middleware?: 'guest' | 'auth';
+  middleware?: "guest" | "auth";
 }
 
 export default function useAuth({ middleware }: UseAuthOptions = {}) {
@@ -24,16 +24,19 @@ export default function useAuth({ middleware }: UseAuthOptions = {}) {
       setIsLoading(false);
     }
 
-    if (middleware === 'guest' && user) router.push('/');
-    if (middleware === 'auth' && !user && error) router.push('/login');
+    if (middleware === "guest" && user) router.push("/");
+    if (middleware === "auth" && !user && error) router.push("/login");
   });
 
-  const { data: user, error, mutate } = useSWR(
-    '/user',
-    () => axios.get('/user').then((response) => response.data.data),
+  const {
+    data: user,
+    error,
+    mutate,
+  } = useSWR("/user", () =>
+    axios.get("/user").then((response) => response.data.data)
   );
 
-  const csrf = () => axios.get('/sanctum/csrf-cookie');
+  const csrf = () => axios.get("/sanctum/csrf-cookie");
 
   const login = async ({ setErrors, ...props }: LoginProps) => {
     setErrors([]);
@@ -41,10 +44,10 @@ export default function useAuth({ middleware }: UseAuthOptions = {}) {
     await csrf();
 
     axios
-      .post('/login', props)
+      .post("/login", props)
       .then(() => {
         mutate();
-        router.push('/');
+        router.push("/");
       })
       .catch((error) => {
         if (error.response.status !== 422) throw error;
@@ -54,11 +57,11 @@ export default function useAuth({ middleware }: UseAuthOptions = {}) {
   };
 
   const logout = async () => {
-    await axios.post('/logout');
+    await axios.post("/logout");
 
     mutate(null);
 
-    router.push('/login');
+    router.push("/login");
   };
 
   return {
