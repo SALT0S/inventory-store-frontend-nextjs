@@ -2,6 +2,7 @@ import { NextPage } from "next";
 import Link from "next/link";
 import { useState } from "react";
 import Errors from "../../components/ui/Errors";
+import { useAuth } from "../../lib/useAuth";
 
 const LoginPage: NextPage = () => {
   const [email, setEmail] = useState("");
@@ -9,14 +10,22 @@ const LoginPage: NextPage = () => {
   const [remember, setRemember] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
 
+  const { login, isLoading, user } = useAuth({ middleware: "guest" });
+
   const submitForm = async (event: any) => {
     event.preventDefault();
+
+    await login({ email, password, remember, setErrors });
   };
+
+  if (isLoading || user) {
+    return <>Loading...</>;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="max-w-md w-full p-6 bg-white shadow-lg rounded-lg">
-        <h2 className="text-2xl font-semibold mb-6">Login</h2>
+        <h2 className="text-2xl font-semibold mb-6">Iniciar sesion</h2>
         <form onSubmit={submitForm}>
           <div className="mb-4">
             <label
@@ -39,7 +48,7 @@ const LoginPage: NextPage = () => {
               htmlFor="password"
               className="block text-gray-700 font-medium mb-2"
             >
-              Password
+              Contraseña
             </label>
             <input
               type="password"
@@ -50,6 +59,23 @@ const LoginPage: NextPage = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+
+          <div className="mb-6">
+            <label
+              htmlFor="remember"
+              className="block text-gray-700 font-medium mb-2"
+            >
+              Recordarme
+            </label>
+            <input
+              type="checkbox"
+              id="remember"
+              className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
+            />
+          </div>
+
           <div className="flex items-center justify-between">
             <button
               type="submit"

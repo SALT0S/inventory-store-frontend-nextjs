@@ -42,7 +42,7 @@ const nextConfig = {
   },
 
   images: {
-    domains: ['api.inventory-store.test'],
+    domains: ["api.inventory-store.test", "tailwindui.com"],
   },
 };
 

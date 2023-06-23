@@ -1,8 +1,8 @@
-import { GeneralLayout } from "../../components/layouts/GeneralLayout";
-import React, { useState, useEffect } from "react";
-import axios from "../../lib/axios";
 import { NextSeo } from "next-seo";
 import Image from "next/image";
+import React from "react";
+import { GeneralLayout } from "../../components/layouts/GeneralLayout";
+import axios from "../../lib/axios";
 import { Product } from "../../types";
 
 interface Props {
@@ -38,9 +38,9 @@ const ProductDetails: React.FC<Props> = ({ product }) => {
                 <h2 id="information-heading" className="sr-only">
                   Product information
                 </h2>
-                <p className="text-sm text-gray-500 mt-2">
+                {/*<p className="text-sm text-gray-500 mt-2">
                   {product.category.name}
-                </p>
+                </p>*/}
               </div>
 
               <div>

@@ -1,68 +1,91 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { createProduct } from "../../../lib/api";
-import { addProduct } from "../../../lib/slices/productSlice";
+import React, { useCallback, useState } from "react";
+import { createProduct } from "../../../lib/productApi";
+import { Category, Product } from "../../../types";
+import { ImageUpload } from "../ImageUpload";
 
 interface AddProductModalProps {
   isOpen: boolean;
+  categories: Category[];
   onRequestClose: () => void;
+  onProductAdded: (newProduct: Product) => void;
 }
 
 export const AddProductModal: React.FC<AddProductModalProps> = (props) => {
-  const { isOpen, onRequestClose } = props;
+  const { isOpen, onRequestClose, onProductAdded, categories } = props;
 
-  const [categoryId, setCategoryId] = useState("");
+  const [category_id, setCategoryId] = useState<number | null>(null);
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
   const [weight, setWeight] = useState("");
-  const [purchasePrice, setPurchasePrice] = useState("");
-  const [salePrice, setSalePrice] = useState("");
-  const [stock, setStock] = useState("");
+  const [weightUnit, setWeightUnit] = useState("kg");
+  const [purchase_price, setPurchasePrice] = useState<number | null>(null);
+  const [sale_price, setSalePrice] = useState<number | null>(null);
+  const [stock, setStock] = useState<number | null>(null);
   const [image, setImage] = useState<File | null>(null);
-  const dispatch = useDispatch();
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const [preview, setPreview] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    if (
-      categoryId &&
-      name &&
-      brand &&
-      weight &&
-      purchasePrice &&
-      salePrice &&
-      stock &&
-      image
-    ) {
-      const newProduct = await createProduct(
-        categoryId,
-        name,
-        brand,
-        weight,
-        purchasePrice,
-        salePrice,
-        stock,
+  const onSubmit = useCallback(
+    async (event: React.FormEvent) => {
+      event.preventDefault();
+      setErrorMessage(null);
+      if (
+        category_id &&
+        name &&
+        brand &&
+        weight &&
+        purchase_price &&
+        sale_price &&
+        stock &&
         image
-      );
-      dispatch(addProduct(newProduct));
-    }
-
-    // Reset fields and close modal
-    setCategoryId("");
-    setName("");
-    setBrand("");
-    setWeight("");
-    setPurchasePrice("");
-    setSalePrice("");
-    setStock("");
-    setImage(null);
-    onRequestClose();
-  };
+      ) {
+        try {
+          const newProduct = await createProduct(
+            category_id,
+            name,
+            brand,
+            weight,
+            purchase_price,
+            sale_price,
+            stock,
+            image
+          );
+          onProductAdded(newProduct);
+          setCategoryId(null);
+          setName("");
+          setBrand("");
+          setWeight("");
+          setPurchasePrice(null);
+          setSalePrice(null);
+          setStock(null);
+          setImage(null);
+          setPreview("");
+          onRequestClose();
+        } catch (error) {
+          // @ts-ignore TODO: fix this TS error
+          setErrorMessage(error.response?.data.message);
+        }
+      }
+    },
+    [
+      category_id,
+      name,
+      brand,
+      weight,
+      purchase_price,
+      sale_price,
+      stock,
+      image,
+      onProductAdded,
+      onRequestClose,
+    ]
+  );
 
   const handleCategoryChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    setCategoryId(event.target.value);
+    setCategoryId(parseInt(event.target.value));
   };
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,29 +97,44 @@ export const AddProductModal: React.FC<AddProductModalProps> = (props) => {
   };
 
   const handleWeightChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setWeight(event.target.value);
+    setWeight(event.target.value + " " + weightUnit);
+  };
+
+  const handleWeightUnitChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setWeightUnit(event.target.value);
+    // Update the weight state to include the new unit
+    const [currentWeight] = weight.split(" "); // Extract the numeric part of weight
+    setWeight(currentWeight + " " + event.target.value);
   };
 
   const handlePurchasePriceChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setPurchasePrice(event.target.value);
+    setPurchasePrice(parseInt(event.target.value));
   };
 
   const handleSalePriceChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setSalePrice(event.target.value);
+    setSalePrice(parseInt(event.target.value));
   };
 
   const handleStockChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setStock(event.target.value);
+    setStock(parseInt(event.target.value));
   };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    setImage(file ? file : null);
-  };
+  const onImageChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file) {
+        setImage(file);
+        setPreview(URL.createObjectURL(file));
+      }
+    },
+    [setImage, setPreview]
+  );
 
   return (
     <div
@@ -114,9 +152,9 @@ export const AddProductModal: React.FC<AddProductModalProps> = (props) => {
           aria-modal="true"
           aria-labelledby="modal-headline"
         >
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={onSubmit}>
             <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <div className="sm:flex sm:items-start">
+              <div className="">
                 <div className="mt-3 text-center sm:mt-0 sm:text-left">
                   <h3
                     className="text-lg leading-6 font-medium text-gray-900"
@@ -124,120 +162,191 @@ export const AddProductModal: React.FC<AddProductModalProps> = (props) => {
                   >
                     Agregar producto
                   </h3>
-                  <div className="mt-2">
-                    <div className="mb-4">
+
+                  <div className="mt-5 border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-cyan-600 focus-within:border-cyan-600">
+                    <label
+                      htmlFor="category_id"
+                      className="block text-xs font-medium text-gray-900"
+                    >
+                      Categoría
+                    </label>
+                    <select
+                      id="category_id"
+                      name="category_id"
+                      className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+                      onChange={handleCategoryChange}
+                    >
+                      <option>Seleccionar categoría</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="mt-5 border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-cyan-600 focus-within:border-cyan-600">
+                    <label
+                      htmlFor="name"
+                      className="block text-xs font-medium text-gray-900"
+                    >
+                      Nombre
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      id="name"
+                      required
+                      onChange={handleNameChange}
+                      className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+                      placeholder="Manzana"
+                    />
+                  </div>
+
+                  <div className="mt-5 border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-cyan-600 focus-within:border-cyan-600">
+                    <label
+                      htmlFor="brand"
+                      className="block text-xs font-medium text-gray-900"
+                    >
+                      Marca
+                    </label>
+                    <input
+                      type="text"
+                      name="brand"
+                      id="brand"
+                      required
+                      onChange={handleBrandChange}
+                      className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+                      placeholder="La Favorita"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="mt-5 border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-cyan-600 focus-within:border-cyan-600">
                       <label
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                        htmlFor="category"
-                      >
-                        Categoría
-                      </label>
-                      <select
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="category"
-                      >
-                        <option value="">Selecciona una categoría</option>
-                        <option value="1">Categoría 1</option>
-                        <option value="2">Categoría 2</option>
-                        <option value="3">Categoría 3</option>
-                      </select>
-                    </div>
-                    <div className="mb-4">
-                      <label
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                        htmlFor="name"
-                      >
-                        Nombre
-                      </label>
-                      <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="name"
-                        type="text"
-                        placeholder="Nombre del producto"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                        htmlFor="brand"
-                      >
-                        Marca
-                      </label>
-                      <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="brand"
-                        type="text"
-                        placeholder="Marca del producto"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label
-                        className="block text-gray-700 text-sm font-bold mb-2"
                         htmlFor="weight"
+                        className="block text-xs font-medium text-gray-900"
                       >
                         Peso
                       </label>
-                      <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="weight"
-                        type="text"
-                        placeholder="Peso del producto"
-                      />
+
+                      <div className="mt-1 relative rounded-md">
+                        <input
+                          type="text"
+                          name="weight"
+                          id="weight"
+                          className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+                          placeholder="7.4"
+                          required
+                          onChange={handleWeightChange}
+                        />
+                        <div className="absolute inset-y-0 right-0 flex items-center">
+                          <label htmlFor="kg-lbs" className="sr-only">
+                            Peso
+                          </label>
+                          <select
+                            id="kg-lbs"
+                            name="kg-lbs"
+                            autoComplete="kg-lbs"
+                            className="focus:ring-cyan-500 focus:border-cyan-500 h-full py-0 pl-3 pr-7 border-transparent bg-transparent text-gray-500 sm:text-sm rounded-md"
+                            onChange={handleWeightUnitChange}
+                          >
+                            <option>kg</option>
+                            <option>lbs</option>
+                          </select>
+                        </div>
+                      </div>
                     </div>
-                    <div className="mb-4">
+
+                    <div className="mt-5 border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-cyan-600 focus-within:border-cyan-600">
                       <label
-                        className="block text-gray-700 text-sm font-bold mb-2"
+                        htmlFor="stock"
+                        className="block text-xs font-medium text-gray-900"
+                      >
+                        Stock
+                      </label>
+
+                      <div className="mt-1 relative rounded-md">
+                        <input
+                          type="text"
+                          name="stock"
+                          id="stock"
+                          required
+                          onChange={handleStockChange}
+                          className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+                          placeholder="100"
+                        />
+                        <div className="absolute inset-y-0 right-0">
+                          <p className="text-gray-500 sm:text-sm">Unidades</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="mt-5 border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-cyan-600 focus-within:border-cyan-600">
+                      <label
                         htmlFor="purchase_price"
+                        className="block text-xs font-medium text-gray-900"
                       >
                         Precio de compra
                       </label>
-                      <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="purchase_price"
-                        type="text"
-                        placeholder="Precio de compra del producto"
-                      />
+
+                      <div className="mt-1 relative rounded-md">
+                        <input
+                          type="text"
+                          name="purchase_price"
+                          id="purchase_price"
+                          required
+                          onChange={handlePurchasePriceChange}
+                          className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+                        />
+                        <div className="absolute inset-y-0 right-0">
+                          <p className="text-gray-500 sm:text-sm">USD</p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="mb-4">
+
+                    <div className="mt-5 border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-cyan-600 focus-within:border-cyan-600">
                       <label
-                        className="block text-gray-700 text-sm font-bold mb-2"
                         htmlFor="sale_price"
+                        className="block text-xs font-medium text-gray-900"
                       >
                         Precio de venta
                       </label>
-                      <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="sale_price"
-                        type="text"
-                        placeholder="Precio de venta del producto"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label
-                        className="block text-gray-700 text-sm font-bold mb-2"
-                        htmlFor="stock"
-                      >
-                        Existencia
-                      </label>
-                      <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="stock"
-                        type="text"
-                        placeholder="Existencia del producto"
-                      />
-                    </div>
-                    <div className="mb-2">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                        required
-                      />
+
+                      <div className="mt-1 relative rounded-md">
+                        <input
+                          type="text"
+                          name="sale_price"
+                          id="sale_price"
+                          required
+                          onChange={handleSalePriceChange}
+                          className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+                        />
+                        <div className="absolute inset-y-0 right-0">
+                          <p className="text-gray-500 sm:text-sm">USD</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
+
+                  <ImageUpload
+                    id="productImage"
+                    name="productImage"
+                    image={image}
+                    preview={preview}
+                    onImageChange={onImageChange}
+                    onImageRemove={() => {
+                      setImage(null);
+                      setPreview("");
+                    }}
+                  />
                 </div>
               </div>
+              {errorMessage && (
+                <p className="mt-4 text-red-500">{errorMessage}</p>
+              )}
             </div>
 
             <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">

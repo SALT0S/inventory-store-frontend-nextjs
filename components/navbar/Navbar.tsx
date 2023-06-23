@@ -1,13 +1,17 @@
-import { Popover } from '@headlessui/react';
-import { DesktopBar } from './DesktopBar';
-import { MobileBar } from './MobileBar';
+import { Popover } from "@headlessui/react";
+import React, { useState } from "react";
+import { MenuNav } from "../../constants/MenuNav";
+import { DesktopNavbar } from "./DesktopNavbar";
+import { MobileNavbar } from "./MobileNavbar";
 
-export const Navbar = () => {
+export const Navbar: React.FC = () => {
+  const [open, setOpen] = useState(false);
+
   return (
     <Popover>
-      <DesktopBar />
+      <MobileNavbar navigation={MenuNav} open={open} setOpen={setOpen} />
 
-      <MobileBar />
+      <DesktopNavbar navigation={MenuNav} setOpen={setOpen} />
     </Popover>
   );
 };

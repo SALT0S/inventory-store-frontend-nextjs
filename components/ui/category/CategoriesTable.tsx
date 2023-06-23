@@ -1,8 +1,8 @@
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import React, { useEffect, useState } from "react";
-import { deleteCategory } from "../../../lib/api";
+import { deleteCategory } from "../../../lib/categoryApi";
 import { Category } from "../../../types";
-import { AddCategoryModal } from "./AddCategoryModal";
+import { ManageCategoryModal } from "./ManageCategoryModal";
 
 interface Props {
   categories: Category[];
@@ -11,8 +11,12 @@ interface Props {
 export const CategoriesTable: React.FC<Props> = ({
   categories: initialCategories,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [categories, setCategories] = useState(initialCategories);
+  const [editingCategory, setEditingCategory] = useState<
+    Category | undefined
+  >();
 
   useEffect(() => {
     setCategories(initialCategories);
@@ -20,6 +24,19 @@ export const CategoriesTable: React.FC<Props> = ({
 
   const handleAddCategory = (newCategory: Category) => {
     setCategories((prevCategories) => [...prevCategories, newCategory]);
+  };
+
+  const handleUpdateCategory = (updatedCategory: Category) => {
+    setCategories((prevCategories) =>
+      prevCategories.map((category) =>
+        category.id === updatedCategory.id ? updatedCategory : category
+      )
+    );
+  };
+
+  const handleEdit = (category: Category) => {
+    setEditingCategory(category);
+    setIsEditModalOpen(true);
   };
 
   const handleDelete = async (id: number) => {
@@ -31,22 +48,25 @@ export const CategoriesTable: React.FC<Props> = ({
     }
   };
 
-  const openModal = () => {
-    setIsModalOpen(true);
+  const openAddModal = () => {
+    setIsAddModalOpen(true);
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
+    setIsAddModalOpen(false);
+    setIsEditModalOpen(false);
+    setEditingCategory(undefined); // reset editing category when modal is closed
   };
 
+  // @ts-ignore
   return (
     <div className="flex flex-col mb-8">
       <div className="py-2 align-middle inline-block min-w-full">
         <div className="pb-6 flex justify-between">
           <h2 className="text-xl font-semibold">Tabla de Categorias</h2>
           <button
-            onClick={openModal}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none"
+            onClick={openAddModal}
+            className="px-4 py-2 bg-sky-800 text-white rounded-md hover:bg-sky-600 focus:outline-none"
           >
             Agregar categoría
           </button>
@@ -110,7 +130,7 @@ export const CategoriesTable: React.FC<Props> = ({
                       <TrashIcon className="w-5 h-5" />
                     </button>
                     <button
-                      // onClick={}
+                      onClick={() => handleEdit(category)}
                       className="text-indigo-600 hover:text-indigo-900 ml-3"
                     >
                       <PencilIcon className="w-5 h-5" />
@@ -123,10 +143,19 @@ export const CategoriesTable: React.FC<Props> = ({
         </div>
       </div>
 
-      <AddCategoryModal
-        isOpen={isModalOpen}
+      <ManageCategoryModal
+        isEditing={false}
+        isOpen={isAddModalOpen}
         onRequestClose={closeModal}
-        onCategoryAdded={handleAddCategory}
+        onCategoryChange={handleAddCategory}
+      />
+
+      <ManageCategoryModal
+        isEditing={editingCategory !== null}
+        category={editingCategory}
+        isOpen={isEditModalOpen}
+        onRequestClose={closeModal}
+        onCategoryChange={handleUpdateCategory}
       />
     </div>
   );

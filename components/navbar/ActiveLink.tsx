@@ -1,5 +1,6 @@
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React from "react";
 
 type Props = {
   text: string;
@@ -14,7 +15,8 @@ export const ActiveLink: React.FC<Props> = ({ text, href, className }) => {
       <Link
         href={href}
         prefetch={false}
-        className={router.pathname === href ? 'active' : ''}>
+        className={router.pathname === href ? "active" : ""}
+      >
         {text}
       </Link>
     </li>

@@ -7,10 +7,16 @@ export interface Product {
   purchase_price: number;
   sale_price: number;
   stock: number;
-  category: {
-    name: string;
-  };
   image: string;
+}
+
+export interface ProductResponse {
+  data: {
+    product: Product;
+    image_url: string;
+  };
+  message: string;
+  success: boolean;
 }
 
 export interface Category {

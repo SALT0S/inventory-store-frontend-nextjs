@@ -1,21 +1,62 @@
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
-import React, { useState } from "react";
-import { Product } from "../../../types";
-import { AddProductModal } from "./AddProductModal";
+import React, { useEffect, useState } from "react";
+import { deleteProduct } from "../../../lib/productApi";
+import { Category, Product } from "../../../types";
+import { ManageProductModal } from "./ManageProductModal";
 
 interface Props {
   products: Product[];
+  categories: Category[];
 }
 
-const ProductsTable: React.FC<Props> = ({ products }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export const ProductsTable: React.FC<Props> = ({
+  products: initialProducts,
+  categories: initialCategories,
+}) => {
+  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
+  const [isProductEditModalOpen, setIsProductEditModalOpen] = useState(false);
+  const [categories, setCategories] = useState(initialCategories);
+  const [products, setProducts] = useState(initialProducts);
+  const [editingProduct, setEditingProduct] = useState<Product | undefined>();
 
-  const openModal = () => {
-    setIsModalOpen(true);
+  useEffect(() => {
+    setProducts(initialProducts);
+  }, [initialProducts]);
+
+  const handleAddProduct = (newProduct: Product) => {
+    setProducts((prevProducts) => [...prevProducts, newProduct]);
+  };
+
+  const handleUpdateProduct = (updatedProduct: Product) => {
+    setProducts((prevProducts) =>
+      prevProducts.map((product) =>
+        product.id === updatedProduct.id ? updatedProduct : product
+      )
+    );
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    setIsProductEditModalOpen(true);
+  };
+
+  const handleDeleteProduct = async (id: number) => {
+    try {
+      await deleteProduct(id);
+      setProducts(products.filter((product) => product.id !== id));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const openAddProductModal = () => {
+    setIsAddProductModalOpen(true);
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
+    setIsAddProductModalOpen(false);
+    setIsProductEditModalOpen(false);
+    setEditingProduct(undefined);
   };
 
   return (
@@ -24,10 +65,10 @@ const ProductsTable: React.FC<Props> = ({ products }) => {
         <div className="pb-6 flex justify-between">
           <h2 className="text-xl font-semibold">Tabla de Productos</h2>
           <button
-            onClick={openModal}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none"
+            onClick={openAddProductModal}
+            className="px-4 py-2 bg-sky-800 text-white rounded-md hover:bg-sky-600 focus:outline-none"
           >
-            Agregar categoría
+            Agregar Producto
           </button>
         </div>
         <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -78,12 +119,6 @@ const ProductsTable: React.FC<Props> = ({ products }) => {
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Categoría
-                </th>
-                <th
-                  scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
                 >
                   Acciones
@@ -106,26 +141,23 @@ const ProductsTable: React.FC<Props> = ({ products }) => {
                     {product.weight}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {product.purchase_price}
+                    ${product.purchase_price} USD
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {product.sale_price}
+                    ${product.sale_price} USD
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {product.stock}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {product.category.name}
+                    {product.stock} unidades
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button
-                      // onClick={() => handleDelete(product.id)}
+                      onClick={() => handleDeleteProduct(product.id)}
                       className="text-red-600 hover:text-red-900"
                     >
                       <TrashIcon className="w-5 h-5" />
                     </button>
                     <button
-                      // onClick={() => handleEdit(product.id)}
+                      onClick={() => handleEditProduct(product)}
                       className="text-indigo-600 hover:text-indigo-900 ml-3"
                     >
                       <PencilIcon className="w-5 h-5" />
@@ -138,9 +170,22 @@ const ProductsTable: React.FC<Props> = ({ products }) => {
         </div>
       </div>
 
-      <AddProductModal isOpen={isModalOpen} onRequestClose={closeModal} />
+      <ManageProductModal
+        isEditing={false}
+        isOpen={isAddProductModalOpen}
+        onRequestClose={closeModal}
+        categories={categories}
+        onProductChange={handleAddProduct}
+      />
+
+      <ManageProductModal
+        isEditing={true}
+        isOpen={isProductEditModalOpen}
+        onRequestClose={closeModal}
+        categories={categories}
+        product={editingProduct}
+        onProductChange={handleUpdateProduct}
+      />
     </div>
   );
 };
-
-export default ProductsTable;

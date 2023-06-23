@@ -31,7 +31,7 @@ export const ProductCard: React.FC<Props> = ({ products }) => {
               {product.name}
             </Link>
           </h3>
-          <p className="mt-1 text-sm text-gray-500">{product.category.name}</p>
+          {/*<p className="mt-1 text-sm text-gray-500">{product.category.name}</p>*/}
           <p className="mt-1 text-sm font-medium text-gray-900">
             ${product.sale_price}
           </p>

@@ -16,7 +16,7 @@ const CategoryPage: NextPage<Props> = ({ category, products }) => {
       <NextSeo title={`Categoria ${category.name}`} />
       <div className="md:flex md:items-center md:justify-between">
         <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">
-          {category.name}
+          Categoria - {category.name}
         </h2>
       </div>
 
